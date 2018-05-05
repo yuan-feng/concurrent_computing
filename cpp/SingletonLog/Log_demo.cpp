@@ -14,18 +14,17 @@ void allLog(){
 int main(int argc, char const *argv[])
 {
 
-	std::cout << std::endl << "Default Log level is All" << std::endl ;
+	std::cout << "\nDefault Log level is All" << std::endl ;
 	allLog();
+
 
 	PACKAGE_NAME::Log::Config::get().setLevel( "Info" ) ;
-	std::cout << std::endl << "Reduced Log Level to Info" << std::endl ;
-	
-
+	std::cout << "\nReduced Log Level to Info" << std::endl ;
 	allLog();
+
 	
 	PACKAGE_NAME::Log::Config::get().setLevel( "Nothing" ) ;
-	std::cout << std::endl << "Reduced Log Level to Nothing" << std::endl ;
-
+	std::cout << "\nReduced Log Level to Nothing" << std::endl ;
 	allLog();
 
 	return 0 ;

@@ -1041,24 +1041,21 @@ void allLog(){
 int main(int argc, char const *argv[])
 {
 
-    std::cout &lt;&lt; std::endl &lt;&lt; &quot;Default Log level is All&quot; &lt;&lt; std::endl ;
+    std::cout &lt;&lt; &quot;\nDefault Log level is All&quot; &lt;&lt; std::endl ;
     allLog();
+
 
     PACKAGE_NAME::Log::Config::get().setLevel( &quot;Info&quot; ) ;
-    std::cout &lt;&lt; std::endl &lt;&lt; &quot;Reduced Log Level to Info&quot; &lt;&lt; std::endl ;
-
-
+    std::cout &lt;&lt; &quot;\nReduced Log Level to Info&quot; &lt;&lt; std::endl ;
     allLog();
 
-    PACKAGE_NAME::Log::Config::get().setLevel( &quot;Nothing&quot; ) ;
-    std::cout &lt;&lt; std::endl &lt;&lt; &quot;Reduced Log Level to Nothing&quot; &lt;&lt; std::endl ;
 
+    PACKAGE_NAME::Log::Config::get().setLevel( &quot;Nothing&quot; ) ;
+    std::cout &lt;&lt; &quot;\nReduced Log Level to Nothing&quot; &lt;&lt; std::endl ;
     allLog();
 
     return 0 ;
 }
-
-
 </code></pre>
 
 <p>Output is <br />
