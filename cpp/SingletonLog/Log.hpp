@@ -21,7 +21,6 @@
 #include <mutex>
 #include <iostream>
 #include <sstream>
-#include <string>
 
 
 
@@ -47,15 +46,19 @@ namespace PACKAGE_NAME{
 				  if( levelStr == PACKAGE_NAME_stringify( l ) ){ level = L_##l ; }
 
 				  PACKAGE_NAME_LOG_LEVELS
+
+				  if( levelStr == "Nothing" ){ level = L_Nothing ; }
+
 				#undef PACKAGE_NAME_LOG_LEVEL_
+
 			}
 
 		private:
 			Config()
 			: out(nullptr)
 			, err(nullptr)
-			, level(DEFAULT_LOG_LEVEL), 
-			no_prefix(false)
+			, level(DEFAULT_LOG_LEVEL)
+			, no_prefix(false)
 			{}
 
 		}; // config
@@ -146,7 +149,6 @@ namespace PACKAGE_NAME{
 				}
 
 
-
 				static std::recursive_mutex& global_mutex() {
 					static std::recursive_mutex s_global ; 
 					return s_global ; 
@@ -158,8 +160,10 @@ namespace PACKAGE_NAME{
 			// Special for Error with red color.
 			template<>
 			const char * LogBase::prefix<L_Error>() {
-				static const std::string color_prefix = "\x1b[31m[E]\x1b[0m " ;
-				return ( Config::get().no_prefix ) ? "" : color_prefix.c_str() ;
+				static const char s_prefix[14] = {
+							'\x1b', '[', '3', '1', 'm', '[', 'E', ']', '\x1b', '[', '0', 'm', ' ', '\0'
+						}; // "\x1b[31m[E]\x1b[0m "
+				return ( Config::get().no_prefix ) ? "" : s_prefix ;
 			}
 
 
@@ -256,17 +260,6 @@ namespace PACKAGE_NAME{
 				std::ostream& unsafe(){
 					return *buffer.stream << LogBase::prefix<L_Error>() ; 
 				}
-				// static const char * prefix() {
-				// 	// static const char s_prefix[14] = {
-				// 	// 		'\x1b','[','3','1','m',
-				// 	// 			'[', LevelNames< L_Error > ::abbrev(), ']',
-				// 	// 		'\x1b','[','0','m', 
-				// 	// 		' ',
-				// 	// 		'\0'
-				// 	// 	};
-				// 	static const std::string color_prefix = "\x1b[31m[EEE]\x1b[0m" ;
-				// 	return ( Config::get().no_prefix ) ? "" : color_prefix.c_str() ;
-				// }
 			}; // Log special for level error 
 
 

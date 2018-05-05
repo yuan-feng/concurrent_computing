@@ -1023,58 +1023,66 @@ body .markdown-body
 <li>Red Color for Log::Error().</li>
 </ul>
 <p>You can modify the PACKAGE_NAME to your own namespace and plug into your project quickly.</p>
-<h4 id="examples"><a name="user-content-examples" href="#examples" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Examples</h4>
+<h4 id="example"><a name="user-content-example" href="#example" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Example</h4>
+<p>File Log_demo.cpp</p>
 <pre><code>#include &quot;Log.hpp&quot; 
 
 void allLog(){
-    PACKAGE_NAME::Log::All() &lt;&lt; &quot; All &quot; &lt;&lt; std::endl;
-    PACKAGE_NAME::Log::Debug() &lt;&lt; &quot; Debug &quot; &lt;&lt; std::endl;
+    std::cout &lt;&lt; &quot;All Logging... &quot; &lt;&lt; std::endl;
+    PACKAGE_NAME::Log::All()     &lt;&lt; &quot; All     &quot; &lt;&lt; std::endl;
+    PACKAGE_NAME::Log::Debug()   &lt;&lt; &quot; Debug   &quot; &lt;&lt; std::endl;
     PACKAGE_NAME::Log::Verbose() &lt;&lt; &quot; Verbose &quot; &lt;&lt; std::endl;
-    PACKAGE_NAME::Log::Info() &lt;&lt; &quot; Info &quot; &lt;&lt; std::endl;
+    PACKAGE_NAME::Log::Info()    &lt;&lt; &quot; Info    &quot; &lt;&lt; std::endl;
     PACKAGE_NAME::Log::Warning() &lt;&lt; &quot; Warning &quot; &lt;&lt; std::endl;
-    PACKAGE_NAME::Log::Error() &lt;&lt; &quot; Error &quot; &lt;&lt; std::endl;
+    PACKAGE_NAME::Log::Error()   &lt;&lt; &quot; Error   &quot; &lt;&lt; std::endl;
+    std::cout &lt;&lt; &quot;All Logging... Done! &quot; &lt;&lt; std::endl;
 }
 
 int main(int argc, char const *argv[])
 {
 
+    std::cout &lt;&lt; std::endl &lt;&lt; &quot;Default Log level is All&quot; &lt;&lt; std::endl ;
     allLog();
 
     PACKAGE_NAME::Log::Config::get().setLevel( &quot;Info&quot; ) ;
-    PACKAGE_NAME::Log::Info() &lt;&lt; std::endl &lt;&lt; &quot; Reduced Log Level to &quot; &lt;&lt; &quot;Info&quot; &lt;&lt; std::endl ;
+    std::cout &lt;&lt; std::endl &lt;&lt; &quot;Reduced Log Level to Info&quot; &lt;&lt; std::endl ;
 
+
+    allLog();
+
+    PACKAGE_NAME::Log::Config::get().setLevel( &quot;Nothing&quot; ) ;
+    std::cout &lt;&lt; std::endl &lt;&lt; &quot;Reduced Log Level to Nothing&quot; &lt;&lt; std::endl ;
 
     allLog();
 
     return 0 ;
 }
 
+
 </code></pre>
 
 <p>Output is <br />
-<pre><code>[A]  All 
+<pre><code>Default Log level is All
+All Logging... 
+[A]  All 
 [D]  Debug 
 [V]  Verbose 
 [I]  Info 
 [W]  Warning 
-<span style="color:red">[E]</span>  Error 
-[I] 
-[I]  Reduced Log Level to Info
-[I]  Info 
-[W]  Warning 
-<span style="color:red">[E]</span>
-</code></pre></p>
-<!-- [D]  Debug 
-[V]  Verbose 
-[I]  Info 
-[W]  Warning 
-<span style="color:red">[E]</span>  Error 
-[I] 
-[I]  Reduced Log Level to Info
-[I]  Info 
-[W]  Warning 
-<span style="color:red">[E]</span>  Error  -->
+[E]  Error 
+All Logging... Done! 
 
+Reduced Log Level to Info
+All Logging... 
+[I]  Info 
+[W]  Warning 
+[E]  Error 
+All Logging... Done! 
+
+Reduced Log Level to Nothing
+All Logging... 
+All Logging... Done!
+</code></pre></p>
 <h4 id="tutorial"><a name="user-content-tutorial" href="#tutorial" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Tutorial</h4>
 <h6 id="usage-1"><a name="user-content-usage-1" href="#usage-1" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Usage 1:</h6>
 <p>Customize the log-level with the following command:<br />

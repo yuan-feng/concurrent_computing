@@ -1,24 +1,32 @@
 #include "Log.hpp" 
 
 void allLog(){
-	PACKAGE_NAME::Log::All() << " All " << std::endl;
-	PACKAGE_NAME::Log::Debug() << " Debug " << std::endl;
+	std::cout << "All Logging... " << std::endl;
+	PACKAGE_NAME::Log::All()     << " All     " << std::endl;
+	PACKAGE_NAME::Log::Debug()   << " Debug   " << std::endl;
 	PACKAGE_NAME::Log::Verbose() << " Verbose " << std::endl;
-	PACKAGE_NAME::Log::Info() << " Info " << std::endl;
+	PACKAGE_NAME::Log::Info()    << " Info    " << std::endl;
 	PACKAGE_NAME::Log::Warning() << " Warning " << std::endl;
-	PACKAGE_NAME::Log::Error() << " Error " << std::endl;
+	PACKAGE_NAME::Log::Error()   << " Error   " << std::endl;
+	std::cout << "All Logging... Done! " << std::endl;
 }
 
 int main(int argc, char const *argv[])
 {
 
+	std::cout << std::endl << "Default Log level is All" << std::endl ;
 	allLog();
 
-  	PACKAGE_NAME::Log::Config::get().setLevel( "Info" ) ;
-  	PACKAGE_NAME::Log::Info() << std::endl << " Reduced Log Level to " << "Info" << std::endl ;
-  	
+	PACKAGE_NAME::Log::Config::get().setLevel( "Info" ) ;
+	std::cout << std::endl << "Reduced Log Level to Info" << std::endl ;
+	
 
 	allLog();
 	
+	PACKAGE_NAME::Log::Config::get().setLevel( "Nothing" ) ;
+	std::cout << std::endl << "Reduced Log Level to Nothing" << std::endl ;
+
+	allLog();
+
 	return 0 ;
 }
