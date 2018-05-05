@@ -4,6 +4,7 @@
 #include <vector>
 #include <functional>
 
+using namespace PACKAGE_NAME;
 
 size_t work() {
 
@@ -11,22 +12,22 @@ size_t work() {
   s << "hi my name is: " << std::this_thread::get_id() ;
   
   for(size_t i  = 0; i < 3; ++i) {
-    PACKAGE_NAME::Log::All() << s.str() << std::endl  ; 
+    Log::All() << s.str() << std::endl  ; 
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
-    PACKAGE_NAME::Log::Debug() <<  s.str() << std::endl ; 
+    Log::Debug() <<  s.str() << std::endl ; 
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
-    PACKAGE_NAME::Log::Verbose() <<  s.str() << std::endl ; 
+    Log::Verbose() <<  s.str() << std::endl ; 
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
-    PACKAGE_NAME::Log::Info() <<  s.str() << std::endl ; 
+    Log::Info() <<  s.str() << std::endl ; 
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
-    PACKAGE_NAME::Log::Warning() <<  s.str() << std::endl ; 
+    Log::Warning() <<  s.str() << std::endl ; 
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
-    PACKAGE_NAME::Log::Error() << s.str() << std::endl; 
+    Log::Error() << s.str() << std::endl; 
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
   }
@@ -39,18 +40,18 @@ int main(int argc, char const *argv[])
 {
 
   // Basic Test
-  PACKAGE_NAME::Log::All() << " The Default Log level is L_All " << std::endl;
+  Log::All() << " The Default Log level is L_All " << std::endl;
 
-  PACKAGE_NAME::Log::All() << " Testing the basic function ! " << std::endl;
+  Log::All() << " Testing the basic function ! " << std::endl;
 
-  PACKAGE_NAME::Log::All() << " All " << std::endl;
-  PACKAGE_NAME::Log::Debug() << " Debug " << std::endl;
-  PACKAGE_NAME::Log::Verbose() << " Verbose " << std::endl;
-  PACKAGE_NAME::Log::Info() << " Info " << std::endl;
-  PACKAGE_NAME::Log::Warning() << " Warning " << std::endl;
-  PACKAGE_NAME::Log::Error() << " Error " << std::endl;
+  Log::All() << " All " << std::endl;
+  Log::Debug() << " Debug " << std::endl;
+  Log::Verbose() << " Verbose " << std::endl;
+  Log::Info() << " Info " << std::endl;
+  Log::Warning() << " Warning " << std::endl;
+  Log::Error() << " Error " << std::endl;
 
-  PACKAGE_NAME::Log::All() << " Testing the basic function is passed ! " << std::endl;
+  Log::All() << " Testing the basic function is passed ! " << std::endl;
 
 
 
@@ -58,19 +59,19 @@ int main(int argc, char const *argv[])
   // ******************************
   // Set the Log level
   // ******************************
-  PACKAGE_NAME::Log::Config::get().setLevel( custimzedLogLevel ) ;
+  Log::Config::get().setLevel( custimzedLogLevel ) ;
   // ******************************
 
 
 
-  PACKAGE_NAME::Log::Info() << " The Log Level is set to " << custimzedLogLevel << std::endl;
+  Log::Info() << " The Log Level is set to " << custimzedLogLevel << std::endl;
 
 
 
 
   // ******************************
   // Multi-threading Test
-  PACKAGE_NAME::Log::Error() << " Testing the Multi-threading function " << std::endl;
+  Log::Error() << " Testing the Multi-threading function " << std::endl;
   
   std::vector<std::future<size_t> > results;
   for(size_t i = 0; i < 3; ++i) {
@@ -82,7 +83,7 @@ int main(int argc, char const *argv[])
   for(auto& result : results) {
     try {
       size_t count = result.get();
-      PACKAGE_NAME::Log::Info() << " count = " << count << std::endl;
+      Log::Info() << " count = " << count << std::endl;
     }
     catch(std::exception& e) {
       std::cout << e.what();
@@ -90,13 +91,13 @@ int main(int argc, char const *argv[])
     }
   }
 
-  PACKAGE_NAME::Log::Info() << " Testing the Multi-threading function is passed ! " << std::endl;
+  Log::Info() << " Testing the Multi-threading function is passed ! " << std::endl;
   
-  PACKAGE_NAME::Log::Info() << " ************************************************** " << std::endl;
-  PACKAGE_NAME::Log::Info() << " Usage Reminder: the log must end with \"std::endl\" ! " << std::endl;
-  PACKAGE_NAME::Log::Info() << " ************************************************** " << std::endl;
+  Log::Info() << " ************************************************** " << std::endl;
+  Log::Info() << " Usage Reminder: the Log must end with \"std::endl\" ! " << std::endl;
+  Log::Info() << " ************************************************** " << std::endl;
 
-  PACKAGE_NAME::Log::Info() << " All Testing functions are passed ! " << std::endl;
+  Log::Info() << " All Testing functions are passed ! " << std::endl;
 
   return exit_code;
 }
