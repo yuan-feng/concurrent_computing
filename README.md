@@ -13,28 +13,28 @@ Implementation and Test of TAS lock and TTAS lock using a C++11 atomic variable.
 In most cases, TTAS is faster than TAS.
 
 
-#### Scheduler 
+#### [Scheduler](./cpp/DelayedScheduler)
 
 A multimap <Time, Task\> is maintained to keep track of the task queues.
 
 A threadpool is used execute the tasks.
 
-#### MPMCQueue 
+#### [MPMCQueue](./cpp/MPMCQueue)
 
 Lock-free Multiple-producer multiple-consumer queue.
 
 * Use atomic variables as the ticket-lock for fairness.
 * Use padding to prevent false sharing.
 
-#### ReaderWriterLock 
+#### [ReaderWriterLock](./cpp/ReaderWriterLock)
 
-C++14 supports shared_timed_mutex directly. 
+C++14 supports shared_timed_mutex directly. This is a demo.
 
-#### Singleton 
+#### [Singleton](./cpp/Singleton)
 
-C++11 simple singleton
+A very simple C++11 simple singleton.
 
-#### SingletonLog 
+#### [SingletonLog](./cpp/SingletonLog)
 
 Thread-safe customizable multi-level singleton log
 
