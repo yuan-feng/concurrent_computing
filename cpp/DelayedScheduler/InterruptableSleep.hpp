@@ -14,9 +14,6 @@ namespace PACKAGE_NAME{
 		{}
 
 		InterruptableSleep(InterruptableSleep const& ) = delete ;
-		InterruptableSleep(InterruptableSleep && ) = delete ;
-
-		InterruptableSleep(InterruptableSleep const& ) noexcept = delete ;
 		InterruptableSleep(InterruptableSleep && ) noexcept = delete ;
 
 		~InterruptableSleep() noexcept = default ;
@@ -41,13 +38,13 @@ namespace PACKAGE_NAME{
 
 		void interrupt(){
 			std::lock_guard<std::mutex> lock(_lock);
-			interrupted = true ;
-			cv.notify_one();
+			_interrupted = true ;
+			_cv.notify_one();
 		}
 
 	private:
 		bool _interrupted ; 
-		std::mutex _m; 
+		std::mutex _lock; 
 		std::condition_variable _cv ; 
 	}; // InterruptableSleep
 

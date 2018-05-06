@@ -4,10 +4,16 @@
 
 #include <iomanip>
 #include <map>
-#include "ctpl_stl.h"
 
-#include "InterruptableSleep.h"
-#include "Cron.h"
+#include "ThreadPool.h"
+
+#include "InterruptableSleep.hpp"
+#include "Cron.hpp"
+
+
+#include <iostream>
+using std::cerr ;
+using std::endl ; 
 
 #define DEFAULT_MAX_N_TASKS 4
 
@@ -54,8 +60,9 @@ namespace PACKAGE_NAME{
 		{}
 
 		Clock::time_point get_new_time() const override{
-			return Clock::time_point(Clock::duration(0)) ;
+			return Clock::now() + _time ;
 		}
+		Clock::duration _time ;
 	};
 
 	struct CronTask: public Task {
@@ -66,7 +73,7 @@ namespace PACKAGE_NAME{
 		{}
 
 		Clock::time_point get_new_time() const override{
-			return cron.cron_to_next();
+			return _cron.cron_to_next();
 		};
 		Cron _cron ;
 	};
@@ -84,32 +91,32 @@ namespace PACKAGE_NAME{
 
 
 
-	struct Schedular
+	struct Scheduler
 	{
-		explicit Schedular(unsigned int max_n_tasks = DEFAULT_MAX_N_TASKS )
+		explicit Scheduler(unsigned int max_n_tasks = DEFAULT_MAX_N_TASKS )
 		: _done(false)
 		, _threads(max_n_tasks+1)
 		{
-			_threads.push([this](int){
+			_threads.enqueue([this](int){
 				while( !_done ){
 					if ( _tasks.empty() ){
-						sleeper.sleep(); 
+						_sleeper.sleep(); 
 					} else {
 						auto time_of_first_task = (*_tasks.begin()).first ;
 						_sleeper.sleep_until(time_of_first_task);
 					}
 					manage_tasks();
 				}
-			});
+			}, 0);
 		}
 
-		Schedular( const Schedular & ) = delete ; 
-		Schedular &operator=( const Schedular & )  = delete ; 
+		Scheduler( const Scheduler & ) = delete ; 
+		Scheduler &operator=( const Scheduler & )  = delete ; 
 
-		Schedular( Schedular && ) noexcept = delete ; 
-		Schedular &operator=( Schedular && ) noexcept = delete ; 
+		Scheduler( Scheduler && ) noexcept = delete ; 
+		Scheduler &operator=( Scheduler && ) noexcept = delete ; 
 
-		~Schedular(){
+		~Scheduler(){
 			_done = true ; 
 			_sleeper.interrupt() ; 
 		}
@@ -123,11 +130,15 @@ namespace PACKAGE_NAME{
 					std::bind( std::forward<__Callable>(f), std::forward<__Args>(args)... )
 				);
 
+
 			this->add_task(time, std::move(t));
 		}
 
 		template< typename __Callable, typename ... __Args>
-		void in( const Clock::duration time, __Callable && f, __Args && ... args){
+		void in( const Clock::duration time, 
+				__Callable && f, 
+				__Args && ... args)
+		{
 			in( Clock::now() + time, 
 				std::forward<__Callable>(f), 
 				std::forward<__Args>(args)...
@@ -137,7 +148,10 @@ namespace PACKAGE_NAME{
 
 
 		template<typename __Callable, typename ... __Args>
-		void at( const std::string &time , __Callable, __Args && ... args){
+		void at( const std::string &time , 
+				__Callable &&f, 
+				__Args && ... args)
+		{
 			auto time_now = Clock::to_time_t(Clock::now());
 			std::tm tm = *std::localtime(&time_now);
 
@@ -174,7 +188,7 @@ namespace PACKAGE_NAME{
 					std::bind(
 						std::forward<__Callable>(f),
 						std::forward<__Args>(args)...
-						);
+						)
 				);
 
 			auto next_time = t->get_new_time() ;
@@ -244,13 +258,13 @@ namespace PACKAGE_NAME{
 
 		std::mutex _lock ; 
 
-		ctpl::thread_pool _threads ; 
+		ThreadPool _threads ; 
 
 		void add_task( const Clock::time_point time, 
 				std::shared_ptr<Task> t
 			)
 		{
-			std::lock_guard<std::mutex> l(lock);
+			std::lock_guard<std::mutex> l(_lock);
 			_tasks.emplace(time, std::move(t));
 			_sleeper.interrupt();
 		}
@@ -258,7 +272,7 @@ namespace PACKAGE_NAME{
 
 		void manage_tasks(){
 
-			std::lock_guard<std::mutex> l(lock);
+			std::lock_guard<std::mutex> l(_lock) ;
 
 			auto end_of_tasks_to_run = _tasks.upper_bound(Clock::now()) ; 
 
@@ -269,26 +283,22 @@ namespace PACKAGE_NAME{
 				for (auto i = _tasks.begin() ; i != end_of_tasks_to_run; ++i ){
 					auto & task = (*i).second ; 
 
-					if ( task->interval ) {
-						_threads.push([this, task](){
-							task->f();
-							add_task(task->get_new_time, task);
-						});
+					if ( task -> _interval ) {
+						_threads.enqueue([this, task](int){
+							task -> _f();
+							add_task(task->get_new_time() , task);
+						}, 0);
 					} else {
-						_threads.push([task](int){
-							task->f();
-						});
+						_threads.enqueue([task](int){
+							task -> _f();
+						}, 0);
 
-						if ( task->recur ){
+						if ( task -> _recur ){
 							recurred_tasks.emplace(
 									task->get_new_time(),
 									std::move(task)
 								);
 						}
-					}
-
-					if ( task->recur ){
-						recurred_tasks.emplace(task->get_new_time(), std::move(task));
 					}
 				} 
 
@@ -302,9 +312,7 @@ namespace PACKAGE_NAME{
 
 		 } // function manage_tasks
 
-
-
-	}; // class Schedular
+	}; // class Scheduler
 	
 
 	

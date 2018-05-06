@@ -1,6 +1,6 @@
 ## Multiple-producer multiple-consumer queue.
 
-This implementation is to learn/practice multithreading from the excellent code from [rigtorp](https://github.com/rigtorp/MPMCQueue).
+This implementation is to learn/practice multithreading from the excellent code of [rigtorp](https://github.com/rigtorp/MPMCQueue).
 
 It is Lock-free, or actually lower-level Bus-lock on the atomic variables.
 
