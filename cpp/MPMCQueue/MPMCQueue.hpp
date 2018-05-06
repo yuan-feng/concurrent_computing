@@ -1,5 +1,4 @@
 
-
 #ifndef PACKAGE_NAME_UTILS_GUARD_MPMCQueue_H_
 #define PACKAGE_NAME_UTILS_GUARD_MPMCQueue_H_
 
