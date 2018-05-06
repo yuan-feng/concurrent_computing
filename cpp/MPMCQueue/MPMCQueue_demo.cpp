@@ -2,26 +2,29 @@
 #include <iostream>
 #include <thread>
 
+using namespace PACKAGE_NAME;
+
 int main(int argc, char *argv[]) {
-  (void)argc, (void)argv;
 
-  using namespace PACKAGE_NAME;
-
-  MPMCQueue<int> q(10);
-  auto t1 = std::thread([&] {
+  MPMCQueue<int> q(42);
+  
+  auto threadA = std::thread([&] {
     int v;
     q.pop(v);
-    std::cout << "t1 " << v << "\n";
+    std::cout << "threadA " << v << std::endl ;
   });
-  auto t2 = std::thread([&] {
+
+  auto threadB = std::thread([&] {
     int v;
     q.pop(v);
-    std::cout << "t2 " << v << "\n";
+    std::cout << "threadB " << v << std::endl ;
   });
+  
   q.push(1);
   q.push(2);
-  t1.join();
-  t2.join();
+  
+  threadA.join();
+  threadB.join();
 
   return 0;
 }

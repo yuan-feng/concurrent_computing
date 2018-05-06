@@ -1,90 +1,68 @@
-### Thread-safe Singleton Log 
+## Multiple-producer multiple-consumer queue.
+
+This implementation is to learn/practice multithreading from the excellent code from [rigtorp](https://github.com/rigtorp/MPMCQueue).
+
+It is Lock-free, or actually lower-level Bus-lock on the atomic variables.
+
+#### Some Implementation Details
+
+* Use atomic variables as the ticket-lock for fairness.
+* For each element, use padding to avoid the data on the same cache line, which prevents false sharing.
+* Similarly, for the head and tail, use even/odd number padding to prevent false sharing.
+* Bounded blocking queue. It blocks when pop on empty or push to full.
 
 
-
-This is a thread-safe Singleton Log in C++ .
-
-Supports 
-
-* Thread-safety.
-* Customizable log-level.
-* Red Color for Log::Error().
-
-You can modify the PACKAGE_NAME to your own namespace and plug into your project quickly.
 
 #### Example
-File Log_demo.cpp
+File MPMCQueue_demo.cpp
 
 ```
-#include "Log.hpp" 
+#include "MPMCQueue.hpp"
+#include <iostream>
+#include <thread>
 
-void allLog(){
-	std::cout << "All Logging... " << std::endl;
-	PACKAGE_NAME::Log::All()     << " All     " << std::endl;
-	PACKAGE_NAME::Log::Debug()   << " Debug   " << std::endl;
-	PACKAGE_NAME::Log::Verbose() << " Verbose " << std::endl;
-	PACKAGE_NAME::Log::Info()    << " Info    " << std::endl;
-	PACKAGE_NAME::Log::Warning() << " Warning " << std::endl;
-	PACKAGE_NAME::Log::Error()   << " Error   " << std::endl;
-	std::cout << "All Logging... Done! " << std::endl;
+using namespace PACKAGE_NAME;
+
+int main(int argc, char *argv[]) {
+
+  MPMCQueue<int> q(42);
+  
+  auto threadA = std::thread([&] {
+    int v;
+    q.pop(v);
+    std::cout << "threadA " << v << std::endl ;
+  });
+
+  auto threadB = std::thread([&] {
+    int v;
+    q.pop(v);
+    std::cout << "threadB " << v << std::endl ;
+  });
+  
+  q.push(1);
+  q.push(2);
+  
+  threadA.join();
+  threadB.join();
+
+  return 0;
 }
 
-int main(int argc, char const *argv[])
-{
-
-	std::cout << "\nDefault Log level is All" << std::endl ;
-	allLog();
-
-
-	PACKAGE_NAME::Log::Config::get().setLevel( "Info" ) ;
-	std::cout << "\nReduced Log Level to Info" << std::endl ;
-	allLog();
-
-	
-	PACKAGE_NAME::Log::Config::get().setLevel( "Nothing" ) ;
-	std::cout << "\nReduced Log Level to Nothing" << std::endl ;
-	allLog();
-
-	return 0 ;
-}
 ```
 
-Output is 
-```
-Default Log level is All
-All Logging... 
-[A]  All 
-[D]  Debug 
-[V]  Verbose 
-[I]  Info 
-[W]  Warning 
-[E]  Error 
-All Logging... Done! 
-
-Reduced Log Level to Info
-All Logging... 
-[I]  Info 
-[W]  Warning 
-[E]  Error 
-All Logging... Done! 
-
-Reduced Log Level to Nothing
-All Logging... 
-All Logging... Done!
-```
 
 
 #### Tutorial
 
 
-
 Reference : Ticket Lock
-https://www.youtube.com/watch?v=r8eNGLY26T0
+[https://www.youtube.com/watch?v=r8eNGLY26T0](https://www.youtube.com/watch?v=r8eNGLY26T0)
 
 Reference : False Sharing
-https://www.youtube.com/watch?v=dznxqe1Uk3E
+[https://www.youtube.com/watch?v=dznxqe1Uk3E](https://www.youtube.com/watch?v=dznxqe1Uk3E)
 
 Reference : MPMCQueue.h
-https://github.com/rigtorp/MPMCQueue
+[https://github.com/rigtorp/MPMCQueue](https://github.com/rigtorp/MPMCQueue)
+
 
 

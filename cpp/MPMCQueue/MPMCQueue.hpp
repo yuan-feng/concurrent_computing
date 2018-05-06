@@ -9,6 +9,8 @@
 #include <memory>
 #include <stdexcept>
 
+// #include <iostream>
+
 namespace PACKAGE_NAME{
 
 template <typename T> 
@@ -54,12 +56,12 @@ public:
 
 		static_assert( sizeof(MPMCQueue<T>) % kCacheLineSize == 0 ,
 			"ERROR in PACKAGE_NAME::MPMCQueue "
-			"queue_size \% CacheLineSize should equal 0"
+			"queue_size MOD CacheLineSize should equal 0"
 			"to avoid false sharing. "
 			);
 		static_assert( sizeof(Slot) % kCacheLineSize == 0 ,
 			"ERROR in PACKAGE_NAME::MPMCQueue "
-			"slot_size \% CacheLineSize should equal 0"
+			"slot_size MOD CacheLineSize should equal 0"
 			"to avoid false sharing. "
 			);
 
@@ -84,8 +86,9 @@ public:
 	}
 
 	MPMCQueue( const MPMCQueue & ) = delete; 
-	MPMCQueue( MPMCQueue && ) = delete; 
 	MPMCQueue &operator=( const MPMCQueue & ) = delete; 
+	
+	MPMCQueue( MPMCQueue && ) = delete; 
 	MPMCQueue &operator=( MPMCQueue && ) = delete; 
 
 	template <typename ... Args>
@@ -97,7 +100,7 @@ public:
 
 		auto const head = _head.fetch_add(1) ;
 		auto &slot = _slots[idx(head)] ; 
-		while( turn(head) * 2 == slot.turn.load(std::memory_order_acquire) )
+		while( turn(head) * 2 != slot.turn.load(std::memory_order_acquire) )
 			;
 		slot.construct( std::forward<Args>(args)... ) ; 
 		slot.turn.store( turn(head) * 2 + 1 , std::memory_order_release ) ; 
@@ -141,6 +144,8 @@ public:
 	void push( P && v ) noexcept {
 		emplace(std::forward<P>(v));
 	}
+
+
 
 	bool try_push( const T& v ) noexcept {
 		static_assert( std::is_nothrow_copy_constructible<T>::value, 
@@ -197,6 +202,8 @@ private:
 		return i / _capacity ; 
 	}
 
+	
+
 	struct Slot{
 		~Slot() noexcept {
 			if ( turn & 1 ){
@@ -207,7 +214,7 @@ private:
 		template <typename ... Args> 
 		void construct( Args && ... args ) noexcept {
 			static_assert(std::is_nothrow_constructible<T, Args &&...>::value,
-				"The element type in PACKAGE_NAME::MPMCQueue must be nothrow constructible with construct(Args&& ..."
+				"The element type in PACKAGE_NAME::MPMCQueue must be nothrow constructible with construct Args&& ..."
 				);
 			new (&storage) T( std::forward<Args>(args)... );
 		}
