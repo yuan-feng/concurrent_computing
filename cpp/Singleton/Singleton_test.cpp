@@ -29,7 +29,10 @@ int main(int argc, char const *argv[])
 				 future3.get() + 
 				 future4.get() ; 
 
-	std::cout << total.count() << std::endl; 
+	std::cout << "Successfully get 1 billion Singleton instances in " 
+			  << total.count() 
+			  << " seconds!"
+			  << std::endl; 
 
 	return 0;
 }
