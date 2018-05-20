@@ -3,9 +3,9 @@ project (MPMCQueue)
 
 # System Requirement
 set (CMAKE_CXX_STANDARD 14)
+set (CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package( Threads REQUIRED)
 
-include_directories( ${PROJECT_SOURCE_DIR} )
 
 # Executable
 set( exe1 Scheduler_demo.exe ) 
