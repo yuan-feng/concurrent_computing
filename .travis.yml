@@ -5,15 +5,15 @@ sudo: false
 addons:
   apt:
     packages:
-      - gcc-5.4
-      - g++-5.4
+      - gcc-5
+      - g++-5
       - cmake
 
 matrix:
   include:
     - os: linux
       compiler: gcc
-      env: COMPILER=g++-5.4
+      env: COMPILER=g++-5
 
 
 before_script:
