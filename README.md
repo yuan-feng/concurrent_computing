@@ -1,7 +1,5 @@
 ## Multithreading
 
-[![Build Status](https://travis-ci.com/yuan-feng/multithreading.svg?branch=master)](https://travis-ci.com/yuan-feng/multithreading)
-
 My Thread-safe Data-Structure 
 
 
@@ -38,4 +36,8 @@ A very simple C++11 simple singleton.
 #### [SingletonLog](./cpp/SingletonLog)
 
 Thread-safe customizable multi-level singleton log
+
+Build status for cpp/SingletonLog:
+
+ [![Build Status](https://travis-ci.com/yuan-feng/multithreading.svg?branch=master)](https://travis-ci.com/yuan-feng/multithreading)
 
