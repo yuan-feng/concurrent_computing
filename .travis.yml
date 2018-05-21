@@ -1,0 +1,27 @@
+language: cpp
+
+sudo: false
+
+addons:
+  apt:
+    packages:
+      - gcc-5.4
+      - g++-5.4
+      - cmake
+
+matrix:
+  include:
+    - os: linux
+      compiler: gcc
+      env: COMPILER=g++-5.4
+
+
+before_script:
+  - export CXX=$COMPILER
+  - cd cpp/MPMCQueue
+  - mkdir build
+  - cd build
+  - cmake --version
+  - cmake .. 
+
+script: make && ctest
