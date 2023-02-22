@@ -32,7 +32,8 @@
 **/*.app
 
 
-# Markdown generated html
+# Readme Preview
 **/*.html
 
-.vscode/
+# WriteOutput files
+**/*.txt
